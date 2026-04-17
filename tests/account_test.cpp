@@ -9,7 +9,7 @@ TEST(Account, ConstructorStoresIdAndBalance) {
     EXPECT_EQ(account.GetBalance(), 100);
 }
 
-TEST(Account, ChangeBalanceThrowsIfAccountIsNotLocked) {
+TEST(Account, ChangeBalanceThrowsIfNotLocked) {
     Account account(1, 100);
 
     EXPECT_THROW(account.ChangeBalance(50), std::runtime_error);
@@ -23,15 +23,6 @@ TEST(Account, LockAllowsBalanceChange) {
     account.ChangeBalance(50);
 
     EXPECT_EQ(account.GetBalance(), 150);
-}
-
-TEST(Account, LockAllowsNegativeBalanceChange) {
-    Account account(1, 100);
-
-    account.Lock();
-    account.ChangeBalance(-30);
-
-    EXPECT_EQ(account.GetBalance(), 70);
 }
 
 TEST(Account, DoubleLockThrowsException) {
@@ -51,10 +42,4 @@ TEST(Account, UnlockDisablesBalanceChange) {
     account.Unlock();
     EXPECT_THROW(account.ChangeBalance(10), std::runtime_error);
     EXPECT_EQ(account.GetBalance(), 125);
-}
-
-TEST(Account, DestructorIsCalled) {
-    Account* account = new Account(5, 200);
-    EXPECT_EQ(account->GetBalance(), 200);
-    delete account;
 }

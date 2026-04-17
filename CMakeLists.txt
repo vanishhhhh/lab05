@@ -17,7 +17,7 @@ if(BUILD_TESTS)
   file(GLOB LAB05_TEST_SOURCES tests/*.cpp)
 
   add_executable(check ${LAB05_TEST_SOURCES})
-  target_link_libraries(check banking gtest_main)
+  target_link_libraries(check banking gmock_main)
 
   add_test(NAME check COMMAND check)
 endif()
