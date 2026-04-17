@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build-test-coveralls:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,10 +19,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++
+          sudo apt-get install -y cmake g++ lcov
 
       - name: Configure
-        run: cmake -S . -B _build -DBUILD_TESTS=ON
+        run: cmake -S . -B _build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage"
 
       - name: Build
         run: cmake --build _build
@@ -30,3 +30,14 @@ jobs:
       - name: Run tests
         working-directory: _build
         run: ctest --output-on-failure
+
+      - name: Capture coverage
+        run: |
+          lcov --directory . --capture --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' '*/third-party/*' '*/tests/*' --output-file coverage.info
+
+      - name: Upload to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage.info
